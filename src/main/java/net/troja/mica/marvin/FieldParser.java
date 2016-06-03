@@ -12,11 +12,12 @@ public class FieldParser {
 
     }
 
-    public void parse(BufferedReader in) throws IOException {
+    public GameState parse(BufferedReader in) throws IOException {
         getInfo(in);
         getField(in);
         getScoreTable(in);
         System.out.println(gameState);
+        return gameState;
     }
 
     private void getInfo(BufferedReader in) throws IOException {

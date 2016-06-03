@@ -9,6 +9,7 @@ import java.net.Socket;
 public class Marvin {
     public final static String MY_NAME = "Marvin";
     private final FieldParser fieldParser = new FieldParser();
+    private final PathFinder pathFinder = new PathFinder();
 
     public Marvin() {
         Socket echoSocket = null;
@@ -21,7 +22,11 @@ public class Marvin {
 
             out.println("name:" + MY_NAME);
             while (true) {
-                fieldParser.parse(in);
+                final GameState gameState = fieldParser.parse(in);
+                if (gameState.isIamFox()) {
+                    break;
+                }
+                pathFinder.calculatePath(gameState.getMyState(), gameState.getFox(), gameState.getField());
             }
         } catch (final IOException e) {
             e.printStackTrace();
