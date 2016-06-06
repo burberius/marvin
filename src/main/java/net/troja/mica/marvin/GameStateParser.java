@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FieldParser {
+public class GameStateParser {
     private final GameState gameState = new GameState();
 
-    public FieldParser() {
-
+    public GameStateParser() {
     }
 
     public GameState parse(BufferedReader in) throws IOException {

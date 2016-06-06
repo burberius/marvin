@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class Marvin {
     public final static String MY_NAME = "Marvin";
-    private final FieldParser fieldParser = new FieldParser();
+    private final GameStateParser fieldParser = new GameStateParser();
     private final PathFinder pathFinder = new PathFinder();
 
     public Marvin() {
@@ -24,9 +24,28 @@ public class Marvin {
             while (true) {
                 final GameState gameState = fieldParser.parse(in);
                 if (gameState.isIamFox()) {
-                    break;
+                    char closestDirection = 0;
+                    int closestDistance = Integer.MAX_VALUE;
+                    for (final PlayerState enemyState : gameState.getEnemies()) {
+                        final char[] path = pathFinder.calculatePath(gameState.getMyState(), enemyState, gameState.getField());
+                        if (path.length < closestDistance) {
+                            closestDirection = path[0];
+                            closestDistance = path.length;
+                        }
+                    }
+                    final Location myLocation = new Location(gameState.getMyState().getPosX(), gameState.getMyState().getPosY());
+                    for (final char direction : getOtherDirections(closestDirection)) {
+                        final Location newLocation = PathFinder.getNextLocation(myLocation, direction);
+                        System.out.println(myLocation + " direction: " + direction + " " + newLocation);
+                        if (!PathFinder.isWall(gameState.getField(), newLocation.getX(), newLocation.getY())) {
+                            out.println(direction);
+                            break;
+                        }
+                    }
+                } else {
+                    final char[] path = pathFinder.calculatePath(gameState.getMyState(), gameState.getFox(), gameState.getField());
+                    out.println(path[0]);
                 }
-                pathFinder.calculatePath(gameState.getMyState(), gameState.getFox(), gameState.getField());
             }
         } catch (final IOException e) {
             e.printStackTrace();
@@ -42,6 +61,20 @@ public class Marvin {
             }
         }
 
+    }
+
+    private char[] getOtherDirections(char direction) {
+        switch (direction) {
+        case 'a':
+            return "dws".toCharArray();
+        case 'd':
+            return "asw".toCharArray();
+        case 'w':
+            return "sad".toCharArray();
+        case 's':
+            return "wda".toCharArray();
+        }
+        return null;
     }
 
     public static void main(String... args) {

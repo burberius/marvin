@@ -16,13 +16,55 @@ public class PathFinderTest {
     }
 
     @Test
-    public void calulatePaths() {
+    public void calulatePaths1() {
         source.setPosX(3);
         source.setPosY(3);
         destination.setPosX(5);
         destination.setPosY(6);
 
-        final char[] result = "awww".toCharArray();
+        final char[] result = "sssdd".toCharArray();
+
+        final char[] way = classToTest.calculatePath(source, destination, getField());
+
+        assertThat(way, equalTo(result));
+    }
+
+    @Test
+    public void calulatePaths2() {
+        source.setPosX(1);
+        source.setPosY(6);
+        destination.setPosX(6);
+        destination.setPosY(3);
+
+        final char[] result = "dddddwww".toCharArray();
+
+        final char[] way = classToTest.calculatePath(source, destination, getField());
+
+        assertThat(way, equalTo(result));
+    }
+
+    @Test
+    public void calulatePaths3() {
+        source.setPosX(1);
+        source.setPosY(6);
+        destination.setPosX(1);
+        destination.setPosY(3);
+
+        final char[] result = "ddwwaaw".toCharArray();
+
+        final char[] way = classToTest.calculatePath(source, destination, getField());
+
+        assertThat(way, equalTo(result));
+    }
+
+    @Test
+    public void calulatePathsNoResult() {
+        source.setPosX(1);
+        source.setPosY(1);
+        destination.setPosX(1);
+        destination.setPosY(3);
+
+        final char[] result = "".toCharArray();
 
         final char[] way = classToTest.calculatePath(source, destination, getField());
 

@@ -42,6 +42,15 @@ public class Location {
         return new LocationIterator();
     }
 
+    @Override
+    public String toString() {
+        if (from != null) {
+            return "Location [x=" + x + ", y=" + y + ", distance=" + distance + ", from=" + from.x + "|" + from.y + "]";
+        } else {
+            return "Location [x=" + x + ", y=" + y + ", distance=" + distance + ", from=null ]";
+        }
+    }
+
     private class LocationIterator implements Iterator<Location> {
         private final int xOffsets[] = { -1, 1, 0, 0 };
         private final int yOffsets[] = { 0, 0, -1, 1 };
@@ -60,6 +69,5 @@ public class Location {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
     }
 }

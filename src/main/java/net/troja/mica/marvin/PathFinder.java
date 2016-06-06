@@ -15,6 +15,7 @@ public class PathFinder {
         final Set<String> visited = new HashSet<String>();
         final int maxY = field.length;
         final int maxX = field[0].length;
+        final int[][] pathField = new int[maxY][maxX];
 
         // Begin exploration at the starting square
         squaresToExplore.add(new Location(source.getPosX(), source.getPosY()));
@@ -24,6 +25,7 @@ public class PathFinder {
             // Get the next square in the queue to explore
             final Location nextSquare = squaresToExplore.remove();
 
+            pathField[nextSquare.getY()][nextSquare.getX()] = nextSquare.getDistance();
             visited.add(getLocationString(nextSquare));
             // Get all the neighbors of this square
             final Iterator<Location> neighbors = nextSquare.neighbors();
@@ -41,12 +43,7 @@ public class PathFinder {
                         if ((nextX == destination.getPosX()) && (nextY == destination.getPosY())) {
                             System.out.println("Path found");
 
-                            // Color this square as part of the path
-                            maze.onPath(nextX, nextY);
-
-                            // Color the path
-                            highlightPath(adjacentSquare);
-                            return true;
+                            return getPath(adjacentSquare).toCharArray();
                         }
 
                         // We didn't reach the destination, so add this neighbor
@@ -55,7 +52,7 @@ public class PathFinder {
                         squaresToExplore.add(adjacentSquare);
                     }
                 }
-
+                // printField(pathField);
             }
         }
         System.out.println("No path");
@@ -63,12 +60,60 @@ public class PathFinder {
         return path.toString().toCharArray();
     }
 
-    private boolean isWall(char[][] field, int nextX, int nextY) {
+    private String getPath(Location pos) {
+        final StringBuilder path = new StringBuilder();
+        int posX = pos.getX();
+        int posY = pos.getY();
+        Location prev = pos.getFrom();
+        while (prev != null) {
+            if (prev.getX() < posX) {
+                path.append('d');
+            } else if (prev.getX() > posX) {
+                path.append('a');
+            } else if (prev.getY() < posY) {
+                path.append('s');
+            } else {
+                path.append('w');
+            }
+            posX = prev.getX();
+            posY = prev.getY();
+            prev = prev.getFrom();
+        }
+        return path.reverse().toString();
+    }
+
+    public static boolean isWall(char[][] field, int nextX, int nextY) {
         final char pos = field[nextY][nextX];
         return (pos == '#') || (pos == 'w');
     }
 
+    public static Location getNextLocation(Location current, char direction) {
+        switch (direction) {
+        case 'w':
+            return new Location(current.getX(), current.getY() - 1, null);
+        case 's':
+            return new Location(current.getX(), current.getY() + 1, null);
+        case 'd':
+            return new Location(current.getX() + 1, current.getY(), null);
+        case 'a':
+            return new Location(current.getX() - 1, current.getY(), null);
+        default:
+            break;
+        }
+        return current;
+    }
+
     private String getLocationString(final Location nextSquare) {
         return nextSquare.getY() + "-" + nextSquare.getX();
+    }
+
+    private void printField(int[][] pathField) {
+        for (int row = 0; row < pathField.length; row++) {
+            for (final int value : pathField[row]) {
+                System.out.print(value);
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
